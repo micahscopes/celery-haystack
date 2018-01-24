@@ -3,7 +3,7 @@ from django.apps import apps
 from django.core.exceptions import ImproperlyConfigured
 from haystack import connection_router, connections
 from haystack.exceptions import NotHandled as IndexNotFoundException
-
+import django
 from celery_haystack import exceptions
 
 
@@ -41,6 +41,8 @@ class CeleryHaystackSignalHandler(object):
         bits = self.object_path.split('.')
         app_name = '.'.join(bits[:-1])
         classname = bits[-1]
+        print(app_name)
+
         model_class = apps.get_model(app_name, classname)
 
         if model_class is None:
