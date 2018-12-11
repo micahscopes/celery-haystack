@@ -29,6 +29,8 @@ class CelerySignalProcessor(BaseSignalProcessor):
         handles the model, check if the index is Celery-enabled and
         enqueue task.
         """
+
+
         using_backends = self.connection_router.for_write(instance=instance)
 
         for using in using_backends:
@@ -41,4 +43,10 @@ class CelerySignalProcessor(BaseSignalProcessor):
             if isinstance(index, CelerySearchIndex):
                 if action == 'update' and not index.should_update(instance):
                     continue
-                enqueue_task(action, instance)
+
+                if hasattr(index,"Meta"):
+                    print("using:",index.Meta.queue)
+                    enqueue_task(action, instance,queue = index.Meta.queue)
+
+                else:
+                    enqueue_task(action, instance,queue = "celery")
