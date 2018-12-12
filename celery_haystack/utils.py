@@ -1,3 +1,4 @@
+import logging
 from django.core.exceptions import ImproperlyConfigured
 try:
     from importlib import import_module
@@ -38,8 +39,9 @@ def enqueue_task(action, instance, **kwargs):
     if settings.CELERY_HAYSTACK_COUNTDOWN:
         options['countdown'] = settings.CELERY_HAYSTACK_COUNTDOWN
 
+    logging.debug("KWargs %s"%kwargs)
     task = get_update_task()
-    task_func = lambda: task.apply_async((action, identifier), kwargs, **options)
+    task_func = lambda: task.apply_async((action, identifier), **kwargs, **options)
 
     if hasattr(transaction, 'on_commit'):
         # Django 1.9 on_commit hook

@@ -5,7 +5,7 @@ from haystack.exceptions import NotHandled
 
 from .utils import enqueue_task
 from .indexes import CelerySearchIndex
-
+import logging
 
 class CelerySignalProcessor(BaseSignalProcessor):
 
@@ -45,8 +45,9 @@ class CelerySignalProcessor(BaseSignalProcessor):
                     continue
 
                 if hasattr(index,"Meta"):
-                    print("using:",index.Meta.queue)
+                    logging.debug("using: %s"%index.Meta.queue)
                     enqueue_task(action, instance,queue = index.Meta.queue)
 
                 else:
+                    logging.debug("using: STANDARD")
                     enqueue_task(action, instance,queue = "celery")
